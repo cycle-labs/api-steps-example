@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GroupTestWorker" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6041fe94-6edb-4117-9acb-9c9fd170273d">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<parameter name="node_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[WITH recursive nodes(NODE_ID, PARENT_NODE_ID, EXECUTION_ID) AS 
+(
+  SELECT NODE_ID, PARENT_NODE_ID, execution_id, NAME, NODE_SEQUENCE, CHAR_LENGTH(cycle_execution_results.node_id) - CHAR_LENGTH(REPLACE(cycle_execution_results.node_id, '.', '')) as depth
+    FROM CYCLE_EXECUTION_RESULTS WHERE EXECUTION_ID = $P{execution_id} AND NODE_ID = $P{node_id}
+    UNION ALL
+  SELECT child.NODE_ID, child.PARENT_NODE_ID, child.execution_id, child.NAME, CHILD.NODE_SEQUENCE, CHAR_LENGTH(child.node_id) - CHAR_LENGTH(REPLACE(child.node_id, '.', '')) as depth
+    FROM CYCLE_EXECUTION_RESULTS as child 
+    JOIN nodes as parent on parent.node_id = child.PARENT_NODE_ID 
+   WHERE child.EXECUTION_ID = $P{execution_id}
+)
+SELECT * FROM nodes ORDER BY NODE_SEQUENCE ;]]>
+	</queryString>
+	<field name="NODE_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NODE_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="NODE_ID"/>
+	</field>
+	<field name="PARENT_NODE_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PARENT_NODE_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="PARENT_NODE_ID"/>
+	</field>
+	<field name="EXECUTION_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EXECUTION_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="EXECUTION_ID"/>
+	</field>
+	<field name="NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="NAME"/>
+	</field>
+	<field name="NODE_SEQUENCE" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="NODE_SEQUENCE"/>
+		<property name="com.jaspersoft.studio.field.label" value="NODE_SEQUENCE"/>
+	</field>
+	<field name="DEPTH" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="0" y="0" width="430" height="30" uuid="74989b41-cd2a-4003-aab4-148961b30475"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA[REPT("&nbsp;&nbsp;", $F{DEPTH}) + $F{NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

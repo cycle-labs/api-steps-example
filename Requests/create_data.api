@@ -1,0 +1,20 @@
+name: ""
+params:
+    "": ""
+url: https://jsonplaceholder.typicode.com/posts
+method: POST
+headers:
+    Content-Type: ${contentType}
+authentication:
+    bearer:
+        token: ""
+    type: bearer
+body:
+    bodytype: JSON
+    contents: |-
+        {
+            "title": "${title}",
+            "body": "Some body text!",
+            "userId": 1
+        }
+

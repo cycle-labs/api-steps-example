@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub-ExecutionSummary-FailureTree" language="groovy" pageWidth="546" pageHeight="752" columnWidth="546" columnSpacing="14" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7646cb43-2d9b-424d-bd99-d2b7c4d346d3">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="4" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String">
+		<parameterDescription><![CDATA[Cycle Execution ID]]></parameterDescription>
+	</parameter>
+	<parameter name="node_id" class="java.lang.String"/>
+	<parameter name="indentation" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_ROOT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT cer1.*,
+       (SELECT COUNT(*)
+          FROM cycle_execution_results cer2
+         WHERE cer2.execution_id = cer1.execution_id
+           AND cer2.parent_node_id = cer1.node_id) AS child_count
+  FROM cycle_execution_results cer1
+ WHERE cer1.execution_id = COALESCE($P{execution_id}, cer1.execution_id)
+   AND cer1.status = 'Fail'
+   AND (
+        ($P{node_id} IS NULL AND cer1.parent_node_id IS NULL)
+        OR
+        ($P{node_id} IS NOT NULL AND cer1.parent_node_id = $P{node_id})
+       )
+ ORDER BY cer1.node_sequence]]>
+	</queryString>
+	<field name="execution_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="execution_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="execution_id"/>
+	</field>
+	<field name="node_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="node_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="node_id"/>
+	</field>
+	<field name="parent_node_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parent_node_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="parent_node_id"/>
+	</field>
+	<field name="sending_node_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sending_node_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="sending_node_id"/>
+	</field>
+	<field name="node_sequence" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="node_sequence"/>
+		<property name="com.jaspersoft.studio.field.label" value="node_sequence"/>
+	</field>
+	<field name="node_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="node_type"/>
+		<property name="com.jaspersoft.studio.field.label" value="node_type"/>
+	</field>
+	<field name="block_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="block_type"/>
+		<property name="com.jaspersoft.studio.field.label" value="block_type"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+	</field>
+	<field name="message" class="java.sql.Clob">
+		<property name="com.jaspersoft.studio.field.name" value="message"/>
+		<property name="com.jaspersoft.studio.field.label" value="message"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="error_message" class="java.sql.Clob">
+		<property name="com.jaspersoft.studio.field.name" value="error_message"/>
+		<property name="com.jaspersoft.studio.field.label" value="error_message"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="file_uri" class="java.sql.Clob">
+		<property name="com.jaspersoft.studio.field.name" value="file_uri"/>
+		<property name="com.jaspersoft.studio.field.label" value="file_uri"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="start_line" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="start_line"/>
+		<property name="com.jaspersoft.studio.field.label" value="start_line"/>
+	</field>
+	<field name="end_line" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="end_line"/>
+		<property name="com.jaspersoft.studio.field.label" value="end_line"/>
+	</field>
+	<field name="data_file_path" class="java.sql.Clob">
+		<property name="com.jaspersoft.studio.field.name" value="data_file_path"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_file_path"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="worker_name" class="java.sql.Clob">
+		<property name="com.jaspersoft.studio.field.name" value="worker_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="worker_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="tags" class="java.sql.Clob">
+		<property name="com.jaspersoft.studio.field.name" value="tags"/>
+		<property name="com.jaspersoft.studio.field.label" value="tags"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="step_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="step_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="step_id"/>
+	</field>
+	<field name="delay_start_time" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="delay_start_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="delay_start_time"/>
+	</field>
+	<field name="start_time" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="start_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="start_time"/>
+	</field>
+	<field name="end_time" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="end_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="end_time"/>
+	</field>
+	<field name="child_count" class="java.lang.Integer"/>
+	<variable name="SanitizedNodeName" class="java.lang.String">
+		<variableExpression><![CDATA[IF(
+	"Playlist".equals($F{node_type}),
+	CONCATENATE("Playlist: ", $F{name}.split("[\\\\/]").reverse().head()),
+	$F{name}
+)]]></variableExpression>
+	</variable>
+	<variable name="IsImportantNode" class="java.lang.Boolean">
+		<variableExpression><![CDATA[NOT(EQUALS("ConditionalBlock", $F{node_type}))]]></variableExpression>
+	</variable>
+	<title>
+		<band height="40">
+			<printWhenExpression><![CDATA[$P{node_id}==null]]></printWhenExpression>
+			<textField bookmarkLevel="2">
+				<reportElement style="Heading 2" x="0" y="0" width="546" height="40" uuid="5cd36af2-5ba7-4395-aa7f-17e22168cc97"/>
+				<textFieldExpression><![CDATA["Failure Tree"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Failure Tree"]]></anchorNameExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24">
+			<printWhenExpression><![CDATA[$P{node_id}==null]]></printWhenExpression>
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="0" width="546" height="18" uuid="5986ef56-d81f-4fad-9063-efdd42ab8dd9">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Step Name]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="546" height="1" uuid="4861fed4-997d-4faf-a421-2f099974256e"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<printWhenExpression><![CDATA[$F{child_count}>0 && $V{IsImportantNode}]]></printWhenExpression>
+			<textField hyperlinkType="" hyperlinkTarget="">
+				<reportElement style="Text" x="0" y="0" width="546" height="20" uuid="4ec7c17a-696c-47cb-a77b-206c6d26a426">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="13ff4223-3fdb-41d2-befa-219600be70ea"/>
+				</reportElement>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	REPT(" ", $P{indentation} * 2),
+	$V{SanitizedNodeName}
+)]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20" splitType="Prevent">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[NOT($F{child_count}>0)]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="546" height="20" backcolor="#FCE4E4" uuid="b1ee3a54-8a5e-415a-85fd-10ccad45e805"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField hyperlinkType="LocalAnchor">
+				<reportElement style="Text" x="0" y="0" width="546" height="20" forecolor="#ED2224" uuid="4059818b-ea46-4ab4-8de8-a38bc80267f2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="13ff4223-3fdb-41d2-befa-219600be70ea"/>
+				</reportElement>
+				<textElement markup="styled"/>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	REPT(" ", $P{indentation} * 2),
+	"<u>",
+	$V{SanitizedNodeName},
+	"</u>"
+)]]></textFieldExpression>
+				<hyperlinkWhenExpression><![CDATA[true]]></hyperlinkWhenExpression>
+				<hyperlinkAnchorExpression><![CDATA[CONCATENATE(
+	"Failure-",
+	$P{execution_id},
+	"-",
+	$F{node_sequence}.toString()
+)]]></hyperlinkAnchorExpression>
+				<hyperlinkTooltipExpression><![CDATA["Jump to Failure on Step # " + $F{node_sequence}]]></hyperlinkTooltipExpression>
+			</textField>
+		</band>
+		<band height="20">
+			<printWhenExpression><![CDATA[$F{child_count}>0]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="546" height="20" isRemoveLineWhenBlank="true" uuid="a9a5e3c2-6e19-41f8-9739-2a07a050af34">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$P{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="node_id">
+					<subreportParameterExpression><![CDATA[$F{node_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="indentation">
+					<subreportParameterExpression><![CDATA[$P{indentation}+IF($V{IsImportantNode}, 1, 0)]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_ROOT">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_ROOT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_ROOT}+"Sub-ExecutionSummary-FailureTree.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1">
+			<printWhenExpression><![CDATA[$P{node_id}==null]]></printWhenExpression>
+			<line>
+				<reportElement x="0" y="0" width="546" height="1" uuid="450c04e6-32ae-4739-b54a-f081da4deb4f">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+</jasperReport>

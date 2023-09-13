@@ -1,0 +1,14 @@
+name: ""
+params:
+    "": ""
+url: https://jsonplaceholder.typicode.com/posts/1
+method: DELETE
+headers:
+    "": ""
+authentication:
+    bearer:
+        token: ""
+    type: bearer
+body:
+    bodytype: JSON
+    contents: |4+

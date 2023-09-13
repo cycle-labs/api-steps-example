@@ -1,0 +1,14 @@
+name: ""
+params:
+    "": ""
+url: https://jsonplaceholder.typicode.com/todos/1
+method: GET
+headers:
+    Content-Type: ${contentType}
+authentication:
+    bearer:
+        token: ""
+    type: bearer
+body:
+    bodytype: JSON
+    contents: ""

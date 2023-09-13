@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub-ExecutionSummary-Screenshot" pageWidth="546" pageHeight="752" columnWidth="546" columnSpacing="14" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d73e82c7-a8f4-4f77-bb5e-278d4cc7bc4e">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="0" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<parameter name="NodeSequence" class="java.lang.Integer"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT ci.image,
+       CAST(cts.screen AS VARCHAR(1024)) AS screen
+  FROM cycle_execution_results cer
+  LEFT
+  JOIN cycle_image_results cir
+    ON cir.execution_id = cer.execution_id
+   AND cir.node_id = cer.node_id
+  LEFT
+  JOIN cycle_image ci
+    ON ci.id = cir.screenshot_image_id
+  LEFT
+  JOIN cycle_terminal_screens cts
+    ON cts.execution_id = cer.execution_id
+   AND cts.node_id = cer.node_id
+ WHERE cer.execution_id = $P{execution_id}
+   AND cer.node_sequence = $P{NodeSequence}]]>
+	</queryString>
+	<field name="image" class="java.awt.Image">
+		<property name="com.jaspersoft.studio.field.name" value="image"/>
+		<property name="com.jaspersoft.studio.field.label" value="image"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_image"/>
+	</field>
+	<field name="screen" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="screen"/>
+		<property name="com.jaspersoft.studio.field.label" value="screen"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="30" splitType="Prevent">
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="0" width="546" height="30" uuid="e9459cc3-28f9-401a-ba22-a8399918b65c"/>
+				<text><![CDATA[Latest Screenshot]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="214" splitType="Stretch">
+			<printWhenExpression><![CDATA[$F{screen}!=null]]></printWhenExpression>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="210" height="214" forecolor="#FFFFFF" backcolor="#030303" uuid="825e3c4e-70c3-44bd-87d0-ffcc921aebd8"/>
+				<textElement>
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{screen}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="290">
+			<printWhenExpression><![CDATA[$F{image}!=null]]></printWhenExpression>
+			<image evaluationTime="Report">
+				<reportElement x="0" y="0" width="546" height="290" uuid="a8bf04ec-3aee-4754-86d4-49dfa7b6b7f2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{image}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

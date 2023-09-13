@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub-ExecutionSummary-TestCaseExamples" language="groovy" pageWidth="546" pageHeight="752" columnWidth="546" columnSpacing="14" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="f89562c8-5854-4561-9a28-666d22771232">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="0" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<parameter name="SUBREPORT_ROOT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[WITH feature_list AS (
+    SELECT CAST(cer_main.name AS VARCHAR(255)) AS feature_name,
+           CAST(cer_main.file_uri AS VARCHAR(255)) AS file_uri,
+           cer_main.node_sequence,
+           (SELECT COUNT(*)
+              FROM cycle_execution_results cer_examples
+             WHERE cer_examples.execution_id = cer_main.execution_id
+               AND cer_examples.parent_node_id = cer_main.node_id
+               AND cer_examples.status = 'Pass') AS examples_passed,
+           (SELECT COUNT(*)
+              FROM cycle_execution_results cer_examples
+             WHERE cer_examples.execution_id = cer_main.execution_id
+               AND cer_examples.parent_node_id = cer_main.node_id
+               AND cer_examples.status = 'Fail') AS examples_failed
+      FROM cycle_execution_results cer_main
+     WHERE cer_main.execution_id = COALESCE($P{execution_id}, cer_main.execution_id)
+       AND node_type = 'Feature'
+)
+SELECT feature_name,
+       file_uri,
+       node_sequence,
+       examples_passed,
+       examples_failed
+  FROM feature_list
+ ORDER BY file_uri, node_sequence]]>
+	</queryString>
+	<field name="feature_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="feature_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="feature_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="file_uri" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="file_uri"/>
+		<property name="com.jaspersoft.studio.field.label" value="file_uri"/>
+	</field>
+	<field name="node_sequence" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="node_sequence"/>
+		<property name="com.jaspersoft.studio.field.label" value="node_sequence"/>
+	</field>
+	<field name="examples_passed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="examples_passed"/>
+		<property name="com.jaspersoft.studio.field.label" value="examples_passed"/>
+	</field>
+	<field name="examples_failed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="examples_failed"/>
+		<property name="com.jaspersoft.studio.field.label" value="examples_failed"/>
+	</field>
+	<variable name="PassRate" class="java.lang.Float">
+		<variableExpression><![CDATA[IF($F{examples_failed} + $F{examples_passed} > 0, (float)$F{examples_passed}/($F{examples_failed} + $F{examples_passed}), 0)]]></variableExpression>
+	</variable>
+	<variable name="TotalPassed" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{examples_passed}]]></variableExpression>
+	</variable>
+	<variable name="TotalFailed" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{examples_failed}]]></variableExpression>
+	</variable>
+	<variable name="TotalPassRate" class="java.lang.Float">
+		<variableExpression><![CDATA[IF($V{TotalPassed}+$V{TotalFailed} > 0, (float)$V{TotalPassed}/($V{TotalPassed}+$V{TotalFailed}), 0)]]></variableExpression>
+	</variable>
+	<variable name="FunctionalArea" class="java.lang.String">
+		<variableExpression><![CDATA[$F{file_uri}.tokenize("\\").reverse()[1]]]></variableExpression>
+	</variable>
+	<variable name="FeatureName" class="java.lang.String">
+		<variableExpression><![CDATA[SUBSTITUTE($F{feature_name}, "Feature: ", "")]]></variableExpression>
+	</variable>
+	<group name="grpFunctionalArea">
+		<groupExpression><![CDATA[$V{FunctionalArea}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField evaluationTime="Group" evaluationGroup="grpFunctionalArea">
+					<reportElement style="Text" x="0" y="1" width="322" height="20" uuid="beed1b27-05f5-4fc1-a16c-dbbda0e0311c">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="false" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FunctionalArea}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40">
+			<textField bookmarkLevel="2">
+				<reportElement style="Heading 2" x="0" y="0" width="546" height="40" uuid="781633dc-25e7-4e8e-aabe-c0df063ce5f4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA["Test Case Examples / Permutations"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Test Case Examples / Permutations"]]></anchorNameExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="0" width="322" height="20" uuid="9274a996-7735-41de-bc91-7ddf16342141">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="565c4e38-d5a8-42d4-b980-f06f049a619a"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Test Case]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="336" y="0" width="42" height="20" uuid="df0b1ce2-915e-460e-b90c-046ea74767ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7347cee3-8237-4fc4-9886-ca892d9b74b5"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Passed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="392" y="0" width="42" height="20" uuid="ec63ad40-9b0c-4aab-9244-f6df149b830a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f07b3bd1-5d79-47e4-959d-d1676642043f"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Failed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="504" y="0" width="42" height="20" uuid="752fa074-eca2-4120-9254-d86f9c0c5dc1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f07b3bd1-5d79-47e4-959d-d1676642043f"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="448" y="0" width="52" height="20" uuid="7b3adcf3-583e-48a4-ac92-00d12e81d5b8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7347cee3-8237-4fc4-9886-ca892d9b74b5"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pass Rate]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="546" height="1" uuid="6e6c281f-bc36-4c8f-b87d-a8de9c3ac65b"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement style="Text" x="0" y="1" width="322" height="20" uuid="ddedb021-97ec-4492-a649-b4cd76343a6a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="565c4e38-d5a8-42d4-b980-f06f049a619a"/>
+				</reportElement>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{FeatureName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" x="336" y="1" width="42" height="20" uuid="20e91eae-88f5-4100-89e2-35b4006da361">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7347cee3-8237-4fc4-9886-ca892d9b74b5"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{examples_passed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" x="392" y="1" width="42" height="20" uuid="20f48a4b-3e13-4df9-bdf5-47068cf5a8a3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f07b3bd1-5d79-47e4-959d-d1676642043f"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{examples_failed}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Left" vAlign="Middle">
+				<reportElement x="504" y="3" width="42" height="16" uuid="2b4bd62c-24c3-493d-8666-41e98e999bfb">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[CONCATENATE($P{SUBREPORT_ROOT}, $V{PassRate}<0.9?"images/fail.png":$V{PassRate}<1?"images/alert.png":"images/pass.png")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement style="Text" x="448" y="1" width="42" height="20" uuid="5e52f03a-19c3-4a40-9f8c-ae9af1d3de21">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f07b3bd1-5d79-47e4-959d-d1676642043f"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[IF(AND($V{PassRate} > 0.99, $F{examples_failed} > 0), 0.99, $V{PassRate})]]></textFieldExpression>
+				<patternExpression><![CDATA["##0%"]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="23">
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="3" width="322" height="20" uuid="a064e245-a61a-480f-bc46-1e51fc750138">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="565c4e38-d5a8-42d4-b980-f06f049a619a"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement style="Heading 3" x="336" y="3" width="42" height="20" uuid="e355564d-e80c-4e15-93e3-3726b8b4ce0f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7347cee3-8237-4fc4-9886-ca892d9b74b5"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalPassed}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Heading 3" x="392" y="3" width="42" height="20" uuid="71965168-7af4-452d-9c5d-6435d55ccd7e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f07b3bd1-5d79-47e4-959d-d1676642043f"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalFailed}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Heading 3" x="448" y="3" width="42" height="20" uuid="26949af8-4382-4a1f-a34a-b21d4caa4bed">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f07b3bd1-5d79-47e4-959d-d1676642043f"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[IF(AND($V{TotalPassRate} > 0.99, $V{TotalFailed} > 0), 0.99, $V{TotalPassRate})]]></textFieldExpression>
+				<patternExpression><![CDATA["##0%"]]></patternExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="546" height="1" uuid="82dad843-57b7-4ebc-84fb-8897e4a848f0"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<image hAlign="Left" vAlign="Middle" evaluationTime="Report">
+				<reportElement x="504" y="7" width="42" height="16" uuid="bef9e418-faf3-4933-b079-0af7adbe23c8">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[CONCATENATE($P{SUBREPORT_ROOT}, $V{PassRate}<0.9?"images/fail.png":$V{PassRate}<1?"images/alert.png":"images/pass.png")]]></imageExpression>
+			</image>
+		</band>
+	</summary>
+</jasperReport>

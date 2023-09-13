@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Main-ExecutionSummary" language="groovy" pageWidth="612" pageHeight="792" columnWidth="546" columnSpacing="14" leftMargin="33" rightMargin="33" topMargin="33" bottomMargin="33" uuid="a9a39968-6728-4e44-a934-8af1789e366d">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="0" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<parameter name="SUBREPORT_ROOT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT cte.execution_id,
+       cte.execution_start_ts,
+       cte.cycle_version,
+       head_node.node_type head_node_type,
+       CAST(head_node.file_uri AS VARCHAR(255)) head_node_name,
+       DATEDIFF(MILLISECOND, MIN(cer.start_time), MAX(cer.end_time)) as execution_time_ms,
+       SUM(CASE WHEN cer.node_type = 'Feature' AND cer.status = 'Pass' THEN 1 ELSE 0 END) AS test_cases_passed,
+       SUM(CASE WHEN cer.node_type = 'Feature' AND cer.status = 'Fail' THEN 1 ELSE 0 END) AS test_cases_failed,
+       SUM(CASE WHEN cer.node_type = 'Scenario' AND cer.name LIKE 'Scenario Outline:%' AND cer.status = 'Pass' THEN 1 ELSE 0 END) AS examples_passed,
+       SUM(CASE WHEN cer.node_type = 'Scenario' AND cer.name LIKE 'Scenario Outline:%' AND cer.status = 'Fail' THEN 1 ELSE 0 END) AS examples_failed,
+       COUNT(cer.node_id) AS step_count
+  FROM cycle_test_execution cte
+  JOIN cycle_execution_results cer
+    ON cer.execution_id = cte.execution_id
+  JOIN cycle_execution_results head_node
+    ON head_node.execution_id = cte.execution_id
+   AND head_node.parent_node_id IS NULL
+ WHERE cte.execution_id = COALESCE($P{execution_id}, cte.execution_id)
+ GROUP BY cte.execution_id,
+       cte.execution_start_ts,
+       cte.cycle_version,
+       head_node.node_type,
+       CAST(head_node.file_uri AS VARCHAR(255))
+ ORDER BY execution_start_ts]]>
+	</queryString>
+	<field name="execution_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="execution_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="execution_id"/>
+	</field>
+	<field name="execution_start_ts" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="execution_start_ts"/>
+		<property name="com.jaspersoft.studio.field.label" value="execution_start_ts"/>
+	</field>
+	<field name="cycle_version" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cycle_version"/>
+		<property name="com.jaspersoft.studio.field.name" value="cycle_version"/>
+	</field>
+	<field name="head_node_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="head_node_type"/>
+		<property name="com.jaspersoft.studio.field.label" value="head_node_type"/>
+	</field>
+	<field name="head_node_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="head_node_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="head_node_name"/>
+	</field>
+	<field name="execution_time_ms" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="execution_time_ms"/>
+		<property name="com.jaspersoft.studio.field.label" value="execution_time_ms"/>
+	</field>
+	<field name="test_cases_passed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="test_cases_passed"/>
+		<property name="com.jaspersoft.studio.field.label" value="test_cases_passed"/>
+	</field>
+	<field name="test_cases_failed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="test_cases_failed"/>
+		<property name="com.jaspersoft.studio.field.label" value="test_cases_failed"/>
+	</field>
+	<field name="examples_passed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="examples_passed"/>
+		<property name="com.jaspersoft.studio.field.label" value="examples_passed"/>
+	</field>
+	<field name="examples_failed" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="examples_failed"/>
+		<property name="com.jaspersoft.studio.field.label" value="examples_failed"/>
+	</field>
+	<field name="step_count" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="examples_failed"/>
+		<property name="com.jaspersoft.studio.field.name" value="examples_failed"/>
+	</field>
+	<variable name="ExecutionTimeHours" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{execution_time_ms}/3600000]]></variableExpression>
+	</variable>
+	<variable name="ExecutionTimeSeconds" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{execution_time_ms}%60000/1000]]></variableExpression>
+	</variable>
+	<variable name="ExecutionTimeMinutes" class="java.lang.Long">
+		<variableExpression><![CDATA[$F{execution_time_ms}%3600000/60000]]></variableExpression>
+	</variable>
+	<variable name="TotalTestCases" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{test_cases_passed}+$F{test_cases_failed}]]></variableExpression>
+	</variable>
+	<variable name="TestCasePassRate" class="java.lang.Double">
+		<variableExpression><![CDATA[IF(
+	$V{TotalTestCases}>0,
+	((double)$F{test_cases_passed})/((double)$V{TotalTestCases}),
+	0
+)]]></variableExpression>
+	</variable>
+	<variable name="TotalExamples" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{examples_passed}+$F{examples_failed}]]></variableExpression>
+	</variable>
+	<variable name="ExamplesPassRate" class="java.lang.Double">
+		<variableExpression><![CDATA[IF(
+	$V{TotalExamples}>0,
+	((double)$F{examples_passed})/((double)$V{TotalExamples}),
+	0
+)]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="41" splitType="Stretch">
+			<staticText>
+				<reportElement style="Heading 1" x="0" y="0" width="266" height="40" uuid="84fa0804-c553-459f-9e8f-1d7da9991fad"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Execution Report]]></text>
+			</staticText>
+			<image hAlign="Right" vAlign="Middle">
+				<reportElement x="392" y="0" width="154" height="35" uuid="4f07f4c7-d5e8-47dc-8b2a-ad116ae5ccd0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{SUBREPORT_ROOT}+"/images/cycle-labs-logo.png"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="40" width="546" height="1" uuid="d5a5fb5e-2220-42a4-87e6-81854c47e002"/>
+				<graphicElement>
+					<pen lineWidth="2.62"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="315" splitType="Stretch">
+			<break>
+				<reportElement x="0" y="-1" width="546" height="1" uuid="224885b8-1e45-4246-a352-5d7445743f59">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</break>
+			<textField bookmarkLevel="1">
+				<reportElement style="Heading 2" x="0" y="0" width="546" height="40" uuid="4bfe0581-fbe1-4dd0-97b1-c2c8461f16a7">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA["Summary"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Summary"]]></anchorNameExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="40" width="210" height="18" uuid="c4fd5e04-28ee-4718-8284-a52bea0749d4">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Execution ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="224" y="40" width="210" height="18" uuid="2b5cfd27-a7c2-48a7-b545-0e3a08027811">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<text><![CDATA[Initiated]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Text" x="0" y="58" width="210" height="18" uuid="52ac91fa-a687-42bd-b2ef-c20fb9c0f520">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{execution_id}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMM d yyyy h:mm:ss a z">
+				<reportElement style="Text" x="224" y="58" width="210" height="18" uuid="524d5f1f-e07b-44a5-87b8-b28157d15f84">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{execution_start_ts}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Heading 3" x="0" y="76" width="210" height="18" uuid="ece2213c-3af3-4a4c-9a5c-7a435fcebaaa">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{head_node_type}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" x="0" y="94" width="210" height="26" uuid="f360d5cf-2615-4659-afbd-e4f6bffda787">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{head_node_name}.tokenize("\\/").reverse().head()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Heading 3" x="224" y="76" width="210" height="18" uuid="17aaa46f-f15f-44b1-a439-35e8d85a5abe">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Duration]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Text" x="224" y="94" width="210" height="18" uuid="5d586bbc-896f-43c9-a002-2b0a4e675052">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	IF(
+		$V{ExecutionTimeHours}>0,
+		$V{ExecutionTimeHours}.toString()+" hours ",
+		""
+	),
+	IF(
+		$V{ExecutionTimeMinutes}+$V{ExecutionTimeHours}>0,
+		$V{ExecutionTimeMinutes}.toString()+" minutes ",
+		""
+	),
+	$V{ExecutionTimeSeconds}.toString()+" seconds"
+)]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="136" width="266" height="1" uuid="1997c7a4-ce85-44d7-8232-63142e6bea85"/>
+				<graphicElement>
+					<pen lineWidth="1.31"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="280" y="136" width="266" height="1" uuid="baf4b18e-73a2-4b04-8e8b-3453007453b3"/>
+				<graphicElement>
+					<pen lineWidth="1.31"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Heading 2" x="0" y="137" width="266" height="47" uuid="54b2223d-62f6-40e9-8ead-3573828d3789">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Test Case Pass Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 2" x="280" y="136" width="266" height="47" uuid="d1897ecc-da83-4250-b0c3-42c376bc185c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Example Pass Rate]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Huge Text" x="0" y="163" width="266" height="86" uuid="f9c76fd4-e69f-4b0a-b469-325abb8869cd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="html"/>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	Math.round($V{TestCasePassRate} * 100).toString(),
+	"<small style=\"font-size:40pt;\">%</small>"
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Huge Text" x="280" y="163" width="266" height="86" uuid="a3956da5-997f-41ec-b624-70f72ce941b5"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	Math.round(IF(
+		$V{TotalExamples}>0,
+		$V{ExamplesPassRate},
+		$V{TestCasePassRate}
+	) * 100).toString(),
+	"<small style=\"font-size:40pt;\">%</small>"
+)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="242" width="55" height="18" uuid="c7d00d42-9d5a-4e97-94a8-0afcff844659">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Passed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="55" y="242" width="55" height="18" uuid="9b85a5f6-46be-4078-ae6e-aa62176c1954"/>
+				<text><![CDATA[Failed]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Text" x="0" y="260" width="55" height="18" uuid="a82161cc-993f-4597-80b2-50549341c6b8">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{test_cases_passed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" x="55" y="260" width="55" height="18" uuid="b762570d-d0b2-4a7d-85ab-24657fd23e34">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{test_cases_failed}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Heading 3" x="280" y="242" width="55" height="18" uuid="c851fd25-279d-4efa-8a96-657100206f67"/>
+				<text><![CDATA[Passed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="335" y="242" width="55" height="18" uuid="50666a4f-6c3e-448d-adc7-54a4176333cf"/>
+				<text><![CDATA[Failed]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Text" x="280" y="260" width="55" height="18" uuid="5d16b5a5-e135-48f6-9859-38038d7fbcc3">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[IF(
+	$V{TotalExamples}>0,
+	$F{examples_passed},
+	$F{test_cases_passed}
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" x="335" y="260" width="55" height="18" uuid="c0eb5590-1e82-432b-b112-5b9577289b02">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[IF(
+	$V{TotalExamples}>0,
+	$F{examples_failed},
+	$F{test_cases_failed}
+)]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="284" width="266" height="1" uuid="5d30ad72-0a9a-4dee-ba51-2d43f86b4863"/>
+				<graphicElement>
+					<pen lineWidth="1.31"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="280" y="284" width="266" height="1" uuid="1a0471dd-71cd-4a42-90ad-e676954c07c9"/>
+				<graphicElement>
+					<pen lineWidth="1.31"/>
+				</graphicElement>
+			</line>
+			<subreport>
+				<reportElement x="0" y="285" width="546" height="29" uuid="272ef21a-a743-486e-b389-9c317121bb2b"/>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$F{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_ROOT">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_ROOT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_ROOT}+"Sub-ExecutionSummary-TestCaseExamples.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="314" width="546" height="1" uuid="f7fc4c36-23bc-4610-83dd-60f7ee364bb6"/>
+			</break>
+			<staticText>
+				<reportElement style="Heading 3" x="448" y="76" width="98" height="18" uuid="5ae3dc6d-a35c-46ef-9abc-493c5c16767d">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<text><![CDATA[Step Count]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement style="Text" x="448" y="94" width="98" height="18" uuid="a3b5203e-0f49-4676-8299-35d9716df6ab">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{step_count}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Heading 3" x="448" y="40" width="98" height="18" uuid="f9ded5ed-0685-4b61-bbc3-eabe00e4a7cd">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<text><![CDATA[Cycle Version]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Text" x="448" y="58" width="98" height="18" uuid="1517cc05-281b-446a-9518-f6b2034d4cbb">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{cycle_version}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="29">
+			<printWhenExpression><![CDATA[$F{test_cases_failed}+$F{examples_failed}>0]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="546" height="29" uuid="95d318f1-eea1-4c0f-a1cb-4a3e88301ad2"/>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$F{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_ROOT">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_ROOT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_ROOT}+"Sub-ExecutionSummary-FailureSummary.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="49">
+			<printWhenExpression><![CDATA[$F{test_cases_failed}+$F{examples_failed}>0]]></printWhenExpression>
+			<line>
+				<reportElement x="0" y="15" width="546" height="1" uuid="21b989e1-34b4-4ac8-b28c-0671b3c80de9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.31"/>
+				</graphicElement>
+			</line>
+			<subreport>
+				<reportElement x="0" y="20" width="546" height="29" uuid="acf959a8-bde2-4bbc-9a4e-2c7a2ef621ea"/>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$F{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_ROOT">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_ROOT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_ROOT}+"Sub-ExecutionSummary-FailureTree.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="29">
+			<printWhenExpression><![CDATA[$F{test_cases_failed}+$F{examples_failed}>0]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="0" width="546" height="29" uuid="e0b7b375-28c0-4d1a-90be-b27c45a64ca9"/>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$F{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_ROOT">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_ROOT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_ROOT}+"Sub-ExecutionSummary-FailureDetails.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement style="Text" x="448" y="10" width="52" height="20" uuid="bb220a41-00f3-4bc0-a39e-fbb9d8f6c51d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Text" x="500" y="10" width="46" height="20" uuid="6b3cb4c5-9eeb-4658-ab42-563eac749974"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="546" height="1" uuid="9d282e1a-c9e5-4d45-8d15-2b9bf8289754">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="1.31"/>
+				</graphicElement>
+			</line>
+			<textField pattern="MMM d yyyy h:mm:ss a z">
+				<reportElement style="Text" x="0" y="10" width="448" height="20" uuid="c5a7c624-68a3-4712-8ded-60e9554830de"/>
+				<textFieldExpression><![CDATA[$F{execution_start_ts}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

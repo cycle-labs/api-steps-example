@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="GroupTestHeader" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="640c1dba-eb34-441a-81e2-7271c1b35def">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select cycle_test_execution.execution_id,
+       cycle_user,
+       execution_start_ts,
+       cycle_execution_results.worker_name,
+       cycle_execution_results.name as test_name,
+       CYCLE_EXECUTION_RESULTS.NODE_ID 
+  from cycle_test_execution
+  join cycle_execution_results
+    on cycle_execution_results.execution_id = cycle_test_execution.execution_id
+   and cycle_execution_results.parent_node_id is null
+ where cycle_test_execution.execution_id = '1622657861737']]>
+	</queryString>
+	<field name="EXECUTION_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EXECUTION_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="EXECUTION_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_TEST_EXECUTION"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CYCLE_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CYCLE_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="CYCLE_USER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_TEST_EXECUTION"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="EXECUTION_START_TS" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="EXECUTION_START_TS"/>
+		<property name="com.jaspersoft.studio.field.label" value="EXECUTION_START_TS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_TEST_EXECUTION"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TEST_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="TEST_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_EXECUTION_RESULTS"/>
+	</field>
+	<field name="NODE_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NODE_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="NODE_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_EXECUTION_RESULTS"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="WORKER_NAME" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<frame>
+				<reportElement x="180" y="0" width="200" height="80" uuid="8d2e89c1-2a9f-455a-a2e4-01930bbd6698"/>
+				<staticText>
+					<reportElement x="50" y="30" width="100" height="30" uuid="6923d64d-10df-49c2-b1d3-45923f9c039c"/>
+					<textElement textAlignment="Center">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Group Test]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<detail>
+		<band height="247" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="570" height="30" forecolor="#FFFFFF" backcolor="#0066FF" uuid="b1bbdca4-6df9-4ea6-a8ab-4229e55b6181"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEST_NAME}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="-20" y="30" width="612" height="200" uuid="e6d65393-2c3f-4ace-834e-2811411abaca"/>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$P{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="node_id">
+					<subreportParameterExpression><![CDATA[$F{NODE_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["GroupTestWorker.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="350" y="0" width="220" height="30" forecolor="#FFFFFF" uuid="eed22608-b16c-4e65-963c-e1d4cad0edcc"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{WORKER_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub-ExecutionDetails-StepList" pageWidth="718" pageHeight="546" orientation="Landscape" columnWidth="718" columnSpacing="15" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7b3de7c0-d8f0-49e8-a058-5d81488a7894">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Hyperlink" forecolor="#144577" fontSize="9.2"/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="0" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select cycle_execution_results.name,
+         cycle_execution_results.node_id,
+         cycle_execution_results.parent_node_id,
+         cycle_execution_results.node_type,
+         cycle_execution_results.status,
+         cycle_execution_results.start_time,
+         cycle_execution_results.end_time,
+         cycle_execution_results.block_type,
+         DATEDIFF(MILLISECOND, cycle_execution_results.start_time, cycle_execution_results.end_time) / 1000.0 AS duration,
+         cycle_execution_results.message,
+         cycle_execution_results.error_message,
+         cycle_terminal_screens.screen,
+         cycle_image.id as image_id,
+         cycle_image.image
+    from cycle_test_execution
+    join cycle_execution_results
+      on cycle_execution_results.execution_id = cycle_test_execution.execution_id
+    left join cycle_terminal_screens
+      on cycle_terminal_screens.execution_id = cycle_execution_results.execution_id
+     and cycle_terminal_screens.node_id = cycle_execution_results.node_id
+    left join cycle_image_results
+      on cycle_image_results.execution_id = cycle_execution_results.execution_id
+     and cycle_image_results.node_id = cycle_execution_results.node_id
+    left join cycle_image
+      on cycle_image.id = cycle_image_results.screenshot_image_id
+   where cycle_test_execution.execution_id = $P{execution_id}
+   order by cycle_execution_results.node_sequence]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="start_time" class="java.sql.Time">
+		<property name="com.jaspersoft.studio.field.name" value="start_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="start_time"/>
+	</field>
+	<field name="end_time" class="java.sql.Time">
+		<property name="com.jaspersoft.studio.field.name" value="end_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="end_time"/>
+	</field>
+	<field name="duration" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="duration"/>
+		<property name="com.jaspersoft.studio.field.label" value="duration"/>
+	</field>
+	<field name="message" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="message"/>
+		<property name="com.jaspersoft.studio.field.label" value="message"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="error_message" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="error_message"/>
+		<property name="com.jaspersoft.studio.field.label" value="error_message"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="screen" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="screen"/>
+		<property name="com.jaspersoft.studio.field.label" value="screen"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_terminal_screens"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="image" class="java.awt.Image">
+		<property name="com.jaspersoft.studio.field.name" value="image"/>
+		<property name="com.jaspersoft.studio.field.label" value="image"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_image"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="node_id" class="java.lang.String"/>
+	<field name="node_type" class="java.lang.String"/>
+	<field name="parent_node_id" class="java.lang.String"/>
+	<field name="image_id" class="java.lang.String"/>
+	<field name="block_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="block_type"/>
+		<property name="com.jaspersoft.studio.field.name" value="block_type"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<variable name="depth" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{node_id}.length() - $F{node_id}.replace(".", "").length()]]></variableExpression>
+	</variable>
+	<variable name="step_text" class="java.lang.String">
+		<variableExpression><![CDATA[$F{name} + IF(EQUALS($F{node_type}, "ConditionalBlock")," (Conditional Block)", IF(EQUALS($F{node_type}, "ConditionalExpression"), " (Conditional Expression)", ""))]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement style="Heading 2" x="0" y="0" width="718" height="40" uuid="213d4fe0-45fa-46db-af51-a522bc2a4d4a">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Step List"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Step-List"]]></anchorNameExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="0" width="100" height="18" uuid="735a3e18-946b-4a48-a7c3-ac5e3d3c9b07">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Name/Result]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="549" y="0" width="46" height="18" uuid="caa7cae4-b5cf-48a9-b880-0727961c1476">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="610" y="0" width="46" height="18" uuid="09c683a0-1285-4ec2-8f9f-5f56ad6a8a9e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Start]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="718" height="1" uuid="be0e6b76-41a3-415e-89e9-f418b3502136">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Heading 3" x="671" y="0" width="47" height="18" uuid="85e9c7d4-ed81-461f-8e00-ffdafad03292">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Duration]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement style="Text" stretchType="ElementGroupHeight" x="0" y="0" width="488" height="20" uuid="1cf3e267-de7c-410d-90a7-cf647551f736">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="4"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[REPT("  ", $V{depth}.intValue()) + $V{step_text}]]></textFieldExpression>
+				<anchorNameExpression><![CDATA[$F{node_id}]]></anchorNameExpression>
+			</textField>
+			<textField pattern="HH:mm:ss">
+				<reportElement key="" style="Text" mode="Transparent" x="610" y="0" width="61" height="20" backcolor="#FFFFFF" uuid="7af7ef0b-00d7-424c-8eea-91d2b83685d1">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="4">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{start_time}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#0.00">
+				<reportElement style="Text" x="671" y="0" width="47" height="20" uuid="bfb92f66-c4f2-486e-8622-718a98d5f801">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="4"/>
+				<textFieldExpression><![CDATA[$F{duration}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="549" y="0" width="46" height="20" uuid="c61c157e-987b-4db6-9c79-ffa97f0cde6c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box topPadding="4"/>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<textField hyperlinkType="LocalAnchor">
+				<reportElement style="Hyperlink" x="488" y="0" width="46" height="20" uuid="ca01e02a-be13-421e-b12e-ec7394fb2f60">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<printWhenExpression><![CDATA[$F{node_type}.equals("Feature") || $F{block_type}.equals("Scenario:") || $F{block_type}.equals("InnerScenario")]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="4"/>
+				<textElement textAlignment="Right">
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(to top)"]]></textFieldExpression>
+				<hyperlinkAnchorExpression><![CDATA["ScenarioModule-" + $F{node_id}]]></hyperlinkAnchorExpression>
+				<hyperlinkTooltipExpression><![CDATA["Jump back to Scenario Tree"]]></hyperlinkTooltipExpression>
+			</textField>
+		</band>
+		<band height="20" splitType="Prevent">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[!$F{error_message}.isEmpty() || (!$F{message}.isEmpty() && !"Pass".equals($F{message}))]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement style="Text" positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="718" height="20" forecolor="#B2B1B1" uuid="742bdc81-e6df-4275-8052-63557a6862a5">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box topPadding="4"/>
+				<textElement markup="none">
+					<font isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[REPT("  ", $V{depth}.intValue() + 1) + ($F{error_message}.isEmpty() ? $F{message} : $F{error_message})]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="25" splitType="Prevent">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[NOT($F{screen}.isEmpty())]]></printWhenExpression>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="ContainerHeight" mode="Opaque" x="0" y="0" width="718" height="15" isRemoveLineWhenBlank="true" forecolor="#F4F4F4" backcolor="#000000" uuid="fb889a7e-6798-4983-bc84-4c8a7b53c872">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box bottomPadding="0"/>
+				<textElement markup="none">
+					<font fontName="DejaVu Sans Mono" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{screen}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="15" width="718" height="10" forecolor="#0066FF" backcolor="#0066FF" uuid="de8946da-6e7e-4c8b-bf0e-0e5c271d21dc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</frame>
+		</band>
+		<band height="332" splitType="Stretch">
+			<printWhenExpression><![CDATA[NOT($F{image_id}.isEmpty())]]></printWhenExpression>
+			<image scaleImage="RetainShape" onErrorType="Icon">
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="718" height="322" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="96f9b2ec-3347-4114-9b25-6a2eada1946d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{image}]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement positionType="Float" mode="Transparent" x="0" y="322" width="718" height="10" forecolor="#0066FF" backcolor="#0066FF" uuid="36a53b78-5b4e-44c9-ac68-62415f137ab5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</summary>
+</jasperReport>

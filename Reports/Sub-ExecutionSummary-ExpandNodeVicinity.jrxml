@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub-ExecutionSummary-ExpandNodeVicinity" language="groovy" pageWidth="546" pageHeight="752" columnWidth="546" columnSpacing="14" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="fd21b797-a95d-4c6d-8eb2-eded8ab62a5b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="468"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="521"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="0" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<parameter name="SUBREPORT_ROOT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NodeSequence" class="java.lang.Integer"/>
+	<parameter name="EventPrefix" class="java.lang.String">
+		<defaultValueExpression><![CDATA["F-"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT *
+  FROM (SELECT cer1.node_id,
+               cer1.node_sequence,
+               CAST(cer1.name AS VARCHAR(255)) AS name,
+               cer1.status,
+               CASE WHEN cts.screen IS NOT NULL THEN 1 ELSE 0 END AS terminal_screen_exists,
+               CASE WHEN cir.id IS NOT NULL THEN 1 ELSE 0 END AS image_screen_exists,
+               ABS(1 - ROW_NUMBER() OVER (ORDER BY node_sequence DESC)) AS steps_remaining
+          FROM cycle_execution_results cer1
+          LEFT JOIN cycle_terminal_screens cts
+            ON cts.execution_id = cer1.execution_id
+           AND cts.node_id = cer1.node_id
+          LEFT JOIN cycle_image_results cir
+            ON cir.execution_id = cer1.execution_id
+           AND cir.node_id = cer1.node_id
+         WHERE cer1.execution_id = $P{execution_id}
+           AND cer1.node_sequence BETWEEN $P{NodeSequence} - 30 AND $P{NodeSequence}) recent_steps
+  WHERE recent_steps.steps_remaining < 10
+  ORDER BY node_sequence]]>
+	</queryString>
+	<field name="node_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="node_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="node_id"/>
+	</field>
+	<field name="node_sequence" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="node_sequence"/>
+		<property name="com.jaspersoft.studio.field.label" value="node_sequence"/>
+	</field>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cycle_execution_results"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+	</field>
+	<field name="terminal_screen_exists" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="terminal_screen_exists"/>
+		<property name="com.jaspersoft.studio.field.label" value="terminal_screen_exists"/>
+	</field>
+	<field name="image_screen_exists" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="image_screen_exists"/>
+		<property name="com.jaspersoft.studio.field.label" value="image_screen_exists"/>
+	</field>
+	<field name="steps_remaining" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="steps_remaining"/>
+		<property name="com.jaspersoft.studio.field.label" value="steps_remaining"/>
+	</field>
+	<variable name="NodeLevel" class="java.lang.Integer" resetType="Master">
+		<variableExpression><![CDATA[$F{node_id}.tokenize(".").size()]]></variableExpression>
+	</variable>
+	<variable name="MinNodeLevel" class="java.lang.Integer" calculation="Lowest">
+		<variableExpression><![CDATA[$V{NodeLevel}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="LastScreenshotAccumulator" class="java.lang.Integer" calculation="Highest">
+		<variableExpression><![CDATA[IF(
+	$F{terminal_screen_exists} > 0 || $F{image_screen_exists} > 0,
+	$F{node_sequence},
+	0
+)]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="0" width="546" height="20" uuid="94a61e79-c0d6-4efb-90f0-7a4e58d8104c">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Preceding Steps]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="546" height="1" uuid="bcc2f2dd-5503-40f3-9e70-f71bc2dbd1f5"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[NOT(EQUALS( $F{node_sequence}, $P{NodeSequence}))]]></printWhenExpression>
+			<textField>
+				<reportElement style="Text" x="0" y="0" width="490" height="16" uuid="bf257a4f-cd61-43dd-8a70-6636c670086d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c7bf36e4-cfe5-4d0d-afc4-c6ed7d0e5a14"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	REPT(" ",($V{NodeLevel} - $V{MinNodeLevel}) * 2),
+	$F{name}
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" mode="Transparent" x="504" y="0" width="42" height="16" uuid="a3489fcb-13b4-4158-bda4-04830f9ef223">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8567fa3b-3514-49ef-ace5-79b68cabaada"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box leftPadding="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="504" y="0" width="16" height="16" uuid="64dc3e43-b33b-4940-89e4-dcae02fbf37a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["Pass".equals($F{status})?$P{SUBREPORT_ROOT}+"images/pass.png":"Fail".equals($F{status})?$P{SUBREPORT_ROOT}+"images/fail.png":null]]></imageExpression>
+			</image>
+		</band>
+		<band height="16" splitType="Stretch">
+			<printWhenExpression><![CDATA[EQUALS( $F{node_sequence}, $P{NodeSequence})]]></printWhenExpression>
+			<rectangle>
+				<reportElement x="0" y="0" width="546" height="16" backcolor="#FCE4E4" uuid="ef1c75d9-33eb-483a-b1c3-7bfc25851cef"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement style="Text" x="0" y="0" width="490" height="16" forecolor="#ED2224" uuid="b2be1f0e-523a-418a-8d7e-56d4cd653f69">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c7bf36e4-cfe5-4d0d-afc4-c6ed7d0e5a14"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[CONCATENATE(
+	REPT(" ",($V{NodeLevel} - $V{MinNodeLevel}) * 2),
+	$F{name}
+)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" mode="Transparent" x="504" y="0" width="42" height="16" forecolor="#ED2224" uuid="ced46513-525d-4a50-8de5-daf572a715e2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8567fa3b-3514-49ef-ace5-79b68cabaada"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box leftPadding="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="504" y="0" width="16" height="16" uuid="0ac68041-bd5c-4e97-9091-8b2101e4e409">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["Pass".equals($F{status})?$P{SUBREPORT_ROOT}+"images/pass.png":"Fail".equals($F{status})?$P{SUBREPORT_ROOT}+"images/fail.png":null]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<summary>
+		<band height="27">
+			<printWhenExpression><![CDATA[$V{LastScreenshotAccumulator} > 0]]></printWhenExpression>
+			<subreport>
+				<reportElement x="0" y="7" width="546" height="20" isRemoveLineWhenBlank="true" uuid="62d256d5-7981-4efc-abeb-8889c806ff0e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$V{LastScreenshotAccumulator} > 0]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="execution_id">
+					<subreportParameterExpression><![CDATA[$P{execution_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NodeSequence">
+					<subreportParameterExpression><![CDATA[$V{LastScreenshotAccumulator}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_ROOT}+"Sub-ExecutionSummary-Screenshot.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="0" y="0" width="546" height="1" uuid="109739b7-1b1b-4a88-9b35-a09b6c0e1aa0"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

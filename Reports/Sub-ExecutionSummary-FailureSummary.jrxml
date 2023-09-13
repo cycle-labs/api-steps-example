@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Sub-ExecutionSummary-FailureSummary" pageWidth="546" pageHeight="792" columnWidth="546" columnSpacing="14" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="2a9d488e-a455-4948-afd8-788317604e9d">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<style name="Heading 1" fontSize="15.7" isBold="true"/>
+	<style name="Heading 2" fontSize="13.1">
+		<box topPadding="10" bottomPadding="12"/>
+	</style>
+	<style name="Heading 3" fontSize="9.2" isBold="true">
+		<box topPadding="4"/>
+	</style>
+	<style name="Text" isDefault="true" fontSize="9.2">
+		<box topPadding="4" bottomPadding="2"/>
+	</style>
+	<style name="Huge Text" fontSize="65.5" isBold="true"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<parameter name="SUBREPORT_ROOT" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[WITH failure_summary_recursive(execution_id, node_id, parent_node_id, error_message) AS (
+    SELECT cer.execution_id,
+           cer.node_id,
+           cer.parent_node_id,
+           CAST(cer.error_message AS VARCHAR(255)) error_message
+      FROM cycle_execution_results cer
+     WHERE cer.execution_id = COALESCE($P{execution_id}, cer.execution_id)
+       AND cer.node_sequence = 0
+       AND cer.status = 'Fail'
+     UNION ALL
+    SELECT failure_summary_recursive.execution_id,
+           cer.node_id,
+           cer.parent_node_id,
+           CAST(cer.error_message AS VARCHAR(255)) error_message
+      FROM failure_summary_recursive
+      JOIN cycle_execution_results cer
+        ON cer.execution_id = failure_summary_recursive.execution_id
+       AND cer.parent_node_id = failure_summary_recursive.node_id
+     WHERE cer.status = 'Fail'
+)
+SELECT failure_summary_recursive.error_message,
+       COUNT(*) AS cnt
+  FROM failure_summary_recursive
+ WHERE failure_summary_recursive.error_message != ''
+   AND failure_summary_recursive.execution_id = COALESCE($P{execution_id}, failure_summary_recursive.execution_id)
+ GROUP BY failure_summary_recursive.error_message
+ ORDER BY cnt DESC]]>
+	</queryString>
+	<field name="error_message" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="error_message"/>
+		<property name="com.jaspersoft.studio.field.label" value="error_message"/>
+	</field>
+	<field name="cnt" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="cnt"/>
+		<property name="com.jaspersoft.studio.field.label" value="cnt"/>
+	</field>
+	<variable name="FailureCount" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{cnt}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<textField bookmarkLevel="2">
+				<reportElement style="Heading 2" x="0" y="0" width="546" height="40" uuid="27f3ef34-4d39-42cc-92fa-4d25fba6875a"/>
+				<textFieldExpression><![CDATA["Failure Summary"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Failure Summary"]]></anchorNameExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="0" width="490" height="20" uuid="b48904ca-4b7d-4bea-acb4-7b08a0940ee0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2a261609-9550-4a19-a22a-e40e7f5107d1"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Failure]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 3" x="504" y="0" width="42" height="20" uuid="ee06bed8-ce93-4941-b470-6684327721c3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e27ae07d-2455-4ed1-95ed-8c709a08cf50"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="546" height="1" uuid="332c9331-0b4f-455e-b990-a2fdff1eeabf"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement style="Text" x="0" y="2" width="490" height="20" uuid="2101b2c5-f8f8-4c95-92ec-b54c4bdf0952">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2a261609-9550-4a19-a22a-e40e7f5107d1"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{error_message}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Text" x="504" y="2" width="42" height="20" uuid="c25953ef-0bcc-411e-9933-7aa029421423">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e27ae07d-2455-4ed1-95ed-8c709a08cf50"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{cnt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement style="Heading 3" x="0" y="3" width="490" height="20" uuid="eedcf1ed-7af9-4f1a-8c8f-1f0888e999c6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2a261609-9550-4a19-a22a-e40e7f5107d1"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Heading 3" x="504" y="3" width="42" height="20" uuid="9e720ffc-b12d-42a2-b3b3-f8976de4d711">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e27ae07d-2455-4ed1-95ed-8c709a08cf50"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$V{FailureCount}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="546" height="1" uuid="54d17e90-5027-46e3-be1a-97ac407ba74b"/>
+				<graphicElement>
+					<pen lineWidth="0.65" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

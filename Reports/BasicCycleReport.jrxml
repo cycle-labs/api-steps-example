@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BasicCycleReport" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="40beaba9-6d12-4995-89ee-796f309743b2">
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[IkNZQ0xFX0lNQUdFX1JFU1VMVFMiICwyMzIsMjIzLGE2MTM4NGJmLWI3ODItNDUwMy05NTI1LTk2
+MzFiYmVmNzE1ODsiQ1lDTEVfSU1BR0UiICwxNSwyNjQsMWU3MmQ2ZTEtMjI5MC00OGUwLTg0Y2Mt
+NTVkYzI5NzZkN2Y0OyJDWUNMRV9URVNUX0VYRUNVVElPTiIgLDIzMiwxNSxmNTUzOTQxMS04MzJk
+LTRlYWYtYjg3YS04N2E5ZTFhZTIxYTE7IkNZQ0xFX1RFUk1JTkFMX1NDUkVFTlMiICwxNSwxMTks
+YzhlOTQ2NzUtNmEwYy00MjIxLThlNjAtNWNmYTIxM2EwNGRkOyJDWUNMRV9FWEVDVVRJT05fUkVT
+VUxUUyIgLDQ1Miw2NSw3N2Q1YjY3ZC03OGM4LTQyYWYtOWM0OS0wZTJiZTVmM2RmODI7]]>
+	</property>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="225"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="767"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Results-H2"/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="false"/>
+	<parameter name="execution_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT (SELECT name FROM CYCLE_EXECUTION_RESULTS AS HEADER where HEADER.execution_id = CYCLE_TEST_EXECUTION.EXECUTION_ID AND HEADER.parent_node_id IS null) as TITLE,
+	(SELECT FILE_URI FROM CYCLE_EXECUTION_RESULTS AS HEADER where HEADER.execution_id = CYCLE_TEST_EXECUTION.EXECUTION_ID AND HEADER.parent_node_id IS null) as FILE_URI,
+	"CYCLE_EXECUTION_RESULTS"."NODE_ID",
+	REPLACE( REGEXP_REPLACE( CYCLE_EXECUTION_RESULTS.NODE_ID,'[^\\.]',''),'.',' ') || CYCLE_EXECUTION_RESULTS.NAME AS indent_name,
+	"CYCLE_EXECUTION_RESULTS"."NAME",
+	"CYCLE_EXECUTION_RESULTS"."STATUS",
+	FORMATDATETIME("CYCLE_EXECUTION_RESULTS"."START_TIME",'HH:mm:ss.SSS') as START_TIME,
+	FORMATDATETIME("CYCLE_EXECUTION_RESULTS"."END_TIME",'HH:mm:ss.SSS') as END_TIME,
+	CYCLE_TERMINAL_SCREENS.SCREEN as SCREEN,
+	"CYCLE_IMAGE"."IMAGE",
+	"CYCLE_TEST_EXECUTION"."EXECUTION_ID",
+	TRIM(BOTH '"' FROM CYCLE_TEST_EXECUTION.INVOKER) AS APP,
+	replace(FORMATDATETIME("CYCLE_TEST_EXECUTION"."EXECUTION_START_TS", 'yyyy-MM-dd HH:mm:ssZ'), ' ', '<br/>') as EXECUTION_START_TS
+FROM "CYCLE_TEST_EXECUTION"
+	JOIN "CYCLE_EXECUTION_RESULTS" ON 
+	 "CYCLE_TEST_EXECUTION"."EXECUTION_ID" = "CYCLE_EXECUTION_RESULTS"."EXECUTION_ID" 
+	LEFT JOIN "CYCLE_TERMINAL_SCREENS" ON 
+	 "CYCLE_TERMINAL_SCREENS"."EXECUTION_ID" = "CYCLE_EXECUTION_RESULTS"."EXECUTION_ID" 
+	 AND "CYCLE_TERMINAL_SCREENS"."NODE_ID" = "CYCLE_EXECUTION_RESULTS"."NODE_ID" 
+	LEFT JOIN "CYCLE_IMAGE_RESULTS" ON 
+	 "CYCLE_IMAGE_RESULTS"."EXECUTION_ID" = "CYCLE_EXECUTION_RESULTS"."EXECUTION_ID" 
+	 AND "CYCLE_IMAGE_RESULTS"."NODE_ID" = "CYCLE_EXECUTION_RESULTS"."NODE_ID" 
+	LEFT JOIN "CYCLE_IMAGE" ON 
+	 "CYCLE_IMAGE"."ID" = "CYCLE_IMAGE_RESULTS"."SCREENSHOT_IMAGE_ID" 
+WHERE 
+	 "CYCLE_TEST_EXECUTION"."EXECUTION_ID" = $P{execution_id} 
+ORDER BY "CYCLE_EXECUTION_RESULTS"."NODE_SEQUENCE" ASC]]>
+	</queryString>
+	<field name="TITLE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TITLE"/>
+		<property name="com.jaspersoft.studio.field.label" value="TITLE"/>
+	</field>
+	<field name="FILE_URI" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FILE_URI"/>
+		<property name="com.jaspersoft.studio.field.label" value="FILE_URI"/>
+	</field>
+	<field name="INDENT_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INDENT_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="INDENT_NAME"/>
+	</field>
+	<field name="STATUS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="STATUS"/>
+		<property name="com.jaspersoft.studio.field.label" value="STATUS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_EXECUTION_RESULTS"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="START_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="START_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="START_TIME"/>
+	</field>
+	<field name="END_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="END_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="END_TIME"/>
+	</field>
+	<field name="SCREEN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SCREEN"/>
+		<property name="com.jaspersoft.studio.field.label" value="SCREEN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_TERMINAL_SCREENS"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="IMAGE" class="java.sql.Blob">
+		<property name="com.jaspersoft.studio.field.name" value="IMAGE"/>
+		<property name="com.jaspersoft.studio.field.label" value="IMAGE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_IMAGE"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="EXECUTION_START_TS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EXECUTION_START_TS"/>
+		<property name="com.jaspersoft.studio.field.label" value="EXECUTION_START_TS"/>
+	</field>
+	<field name="APP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="APP"/>
+		<property name="com.jaspersoft.studio.field.label" value="APP"/>
+	</field>
+	<field name="EXECUTION_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="EXECUTION_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="EXECUTION_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="CYCLE_TEST_EXECUTION"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="672e5cbe-2d47-4720-b95e-812b993b3274"/>
+				<textField textAdjust="ScaleFont">
+					<reportElement x="20" y="20" width="390" height="43" forecolor="#FFFFFF" uuid="1fe57459-7f4c-41b8-bbf2-f0b657907a37">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TITLE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="20" y="63" width="390" height="30" forecolor="#FFFFFF" uuid="cc8da282-1f30-4b8f-95d5-b7f99a93f124">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{FILE_URI}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="20" y="83" width="30" height="30" forecolor="#FFFFFF" uuid="9f9f21d5-aeb5-435e-a832-0a6f41424355">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<text><![CDATA[ID:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="50" y="83" width="360" height="30" forecolor="#FFFFFF" uuid="f48b1c08-7513-4d50-8d10-9227cdbe6dd9">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{EXECUTION_ID}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement x="395" y="23" width="180" height="40" forecolor="#FFFFFF" uuid="0693781e-78fd-4bed-995a-c588d5f03a3a">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" markup="html">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EXECUTION_START_TS}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="395" y="63" width="180" height="40" forecolor="#FFFFFF" uuid="2a1ecf77-f5a5-49f4-b08b-87d5dc28aa79">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right">
+						<font size="14"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{APP}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="cc0ecde4-612e-40f0-9fac-d68d6e03c83c"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="342" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="7ac3bd7c-abd8-486c-92cc-10f62917148b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="df153d16-b2e8-4325-9fde-5516db1ec0c2"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="342" y="0" width="92" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="13162afa-9153-4e6e-8a9d-085881dd019b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c52d7d31-e99f-4716-a2b3-1f8bdc46e05f"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="432" y="0" width="120" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="bff713f5-4fdc-428f-b92e-fa12dfcb1876">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="763f802f-70f4-46fe-a3e7-6c2f233a1f27"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[START/END TIME]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="39" width="555" height="1" uuid="b87586f6-63ea-45d8-bddb-5c9c11a4ab82">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="0" width="342" height="40" uuid="7ad665e1-66b8-4ad5-a60d-6387f7d25b6e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="df153d16-b2e8-4325-9fde-5516db1ec0c2"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INDENT_NAME}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="342" y="-1" width="90" height="20" uuid="d1aebdbc-79a6-42ed-90ab-9713be84b3a8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c52d7d31-e99f-4716-a2b3-1f8bdc46e05f"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{STATUS}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="432" y="0" width="120" height="20" uuid="6267a27a-f81c-47b9-bc98-959e809dd11a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="763f802f-70f4-46fe-a3e7-6c2f233a1f27"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{START_TIME}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="432" y="20" width="120" height="20" uuid="3f8a4360-52ec-48f8-b7b1-3d99758420c1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f674990-850e-45c2-8378-c791d7472f19"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{END_TIME}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement stretchType="ContainerHeight" mode="Opaque" x="0" y="40" width="555" height="0" forecolor="#FFFFFF" backcolor="#000000" uuid="3f8a4360-52ec-48f8-b7b1-3d99758420c1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3f674990-850e-45c2-8378-c791d7472f19"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement markup="none">
+					<font fontName="Monospaced" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SCREEN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="700ab02d-e8d6-4fcf-9754-793171019cbc"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="8bfecd38-c74d-4ec6-a04e-7e3b957c2920"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="c3bcd525-ce5d-43b5-beef-5da6791039cf"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
