@@ -17,6 +17,3 @@ body:
             "body": "Some body text!",
             "userId": 1
         }
-variabledefaults:
-    contentType: ""
-    title: ""
