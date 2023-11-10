@@ -36,7 +36,7 @@ And I echo $responseBody
 Scenario: Fetch Data API
 Given I assign value "application/json" to unassigned variable "contentType"
 And I assign value "My Title" to unassigned variable "title"
-When I call api "Requests/get_data.api"
+When I call api "Requests/fetch_data.api"
 Then I verify http response had status code 200
 And I assign http response body to variable "responseBody"
 And I echo $responseBody
