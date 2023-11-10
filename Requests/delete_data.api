@@ -11,4 +11,5 @@ authentication:
     type: bearer
 body:
     bodytype: JSON
-    contents: |4+
+    contents: ""
+variabledefaults: {}

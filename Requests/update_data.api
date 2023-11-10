@@ -17,3 +17,5 @@ body:
             "body": "Some Updated body text!",
             "userId": 1
         }
+variabledefaults:
+    contentType: ""

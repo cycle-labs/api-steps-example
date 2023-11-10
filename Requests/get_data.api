@@ -12,3 +12,5 @@ authentication:
 body:
     bodytype: JSON
     contents: ""
+variabledefaults:
+    contentType: ""
